@@ -17,9 +17,14 @@ protected:
   virtual void update(float dt) override;
   Vec2 random_position();
   Vec2 random_direction();
+  void setup_touch_events();
   
 protected:
   std::vector<AirCraft*> _air_craft;
   float _generator_timer = 0.0f;
   int score = 0;
+  
+  Vec2 _previous_point;
+  AirCraft* _selected_craft = nullptr;
+  DrawNode* _drawing_node = nullptr;
 };

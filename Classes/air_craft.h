@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include "cocos2d.h"
+#include "ui/UILayout.h"
 #include "2d/CCDrawNode.h"
 
 using namespace cocos2d;
@@ -24,10 +25,17 @@ public:
   void check_boundaries(Rect box);
   void collide(AirCraft* other);
   void reset_status();
+  void select() { _is_selected = true; }
+  void deselect() { _is_selected = false; }
   
 protected:
   float m_speed = 80.0;
   Vec2 m_actual_velocity = Vec2(1.0f, 0.0f);
   Vec2 m_desired_velocity = Vec2(1.0f, 0.0f);
+  
   DrawNode* _warning_circle = nullptr;
+  DrawNode* _sprite = nullptr;
+  DrawNode* _selection_box = nullptr;
+  
+  bool _is_selected = false;
 };

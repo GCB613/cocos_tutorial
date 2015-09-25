@@ -7,16 +7,17 @@ bool AirCraft::init() {
     return false;
   }
   
+  setName("air_craft");
   setAnchorPoint(Vec2::ANCHOR_MIDDLE);
   
   // Draw the plane.
-  auto shape = DrawNode::create();
-  shape->setPosition(Vec2::ZERO);
-  shape->clear();
-  shape->drawLine(Vec2(-20.0f, 0.0f), Vec2(20.0f, 0.0f), Color4F::GREEN);
-  shape->drawLine(Vec2(10.0f, -15.0f), Vec2(10.0f, 15.0f), Color4F::GREEN);
-  shape->drawLine(Vec2(-18.0f, -8.0f), Vec2(-18.0f, 8.0f), Color4F::GREEN);
-  addChild(shape);
+  _sprite = DrawNode::create();
+  _sprite->setPosition(Vec2::ZERO);
+  _sprite->clear();
+  _sprite->drawLine(Vec2(-20.0f, 0.0f), Vec2(20.0f, 0.0f), Color4F::GREEN);
+  _sprite->drawLine(Vec2(10.0f, -15.0f), Vec2(10.0f, 15.0f), Color4F::GREEN);
+  _sprite->drawLine(Vec2(-18.0f, -8.0f), Vec2(-18.0f, 8.0f), Color4F::GREEN);
+  addChild(_sprite);
   
   _warning_circle = DrawNode::create();
   _warning_circle->setPosition(Vec2::ZERO);
@@ -24,6 +25,13 @@ bool AirCraft::init() {
   _warning_circle->drawCircle(Vec2::ZERO, 25.0f, 360.0f, 25, false, Color4F::RED);
   _warning_circle->setVisible(false);
   addChild(_warning_circle);
+  
+  _selection_box = DrawNode::create();
+  _selection_box->setPosition(Vec2::ZERO);
+  _selection_box->clear();
+  _selection_box->drawRect(Vec2(-26.0f, -26.0f), Vec2(26.0f, 26.0f), cocos2d::Color4F::BLUE);
+  _selection_box->setVisible(false);
+  addChild(_selection_box);
   
   return true;
 }
@@ -40,6 +48,10 @@ void AirCraft::set_initial_velocity(Vec2 velocity) {
 }
 
 void AirCraft::update_aircraft(float time_delta) {
+  if (_selection_box) {
+    _selection_box->setVisible(_is_selected);
+  }
+  
   m_desired_velocity.normalize();
   m_actual_velocity.normalize();
   
@@ -62,7 +74,7 @@ void AirCraft::update_aircraft(float time_delta) {
   if (m_actual_velocity.y < 0.0) {
     theta *= -1.0;
   }
-  setRotation(-theta);
+  _sprite->setRotation(-theta);
 }
 
 void AirCraft::check_boundaries(Rect box) {
