@@ -33,6 +33,8 @@ bool AirCraft::init() {
   _selection_box->setVisible(false);
   addChild(_selection_box);
   
+  _path = AirCraftPath::create();
+  
   return true;
 }
 
@@ -52,6 +54,8 @@ void AirCraft::update_aircraft(float time_delta) {
     _selection_box->setVisible(_is_selected);
   }
   
+  Vec2 old_pos = getPosition();
+  m_desired_velocity = _path->get_heading(old_pos, m_desired_velocity);
   m_desired_velocity.normalize();
   m_actual_velocity.normalize();
   
@@ -65,7 +69,6 @@ void AirCraft::update_aircraft(float time_delta) {
   m_actual_velocity = m_actual_velocity + steering;
   m_actual_velocity.normalize();
   
-  Vec2 old_pos = getPosition();
   Vec2 new_pos = old_pos + m_actual_velocity * m_speed * time_delta;
   setPosition(new_pos);
 
@@ -111,6 +114,13 @@ void AirCraft::reset_status() {
   }
 }
 
+void AirCraft::start_new_path(Vec2 start_point) {
+  _path->reset_path(start_point);
+}
+
+void AirCraft::add_path_point(Vec2 point) {
+  _path->add_point(point);
+}
 
 
 /*

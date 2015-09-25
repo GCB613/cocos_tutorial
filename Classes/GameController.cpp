@@ -32,12 +32,13 @@ void GameController::update(float dt) {
   _generator_timer += dt;
   
   // At a certain time interval, generate an aircraft at a random location.
-  if (_generator_timer >= 2.0f && _air_craft.empty()) {
+  if (_generator_timer >= 2.0f && _air_craft.size() < 3) {
     _generator_timer = 0.0f;
     auto new_air_craft = AirCraft::create();
     new_air_craft->set_initial_position(random_position());
     new_air_craft->set_initial_velocity(random_direction());
     addChild(new_air_craft);
+    addChild(new_air_craft->get_path());
     _air_craft.push_back(new_air_craft);
   }
   
@@ -74,16 +75,9 @@ Vec2 GameController::random_direction() {
 }
 
 void GameController::setup_touch_events() {
-  _drawing_node = DrawNode::create();
-  _drawing_node->setPosition(Vec2::ZERO);
-  addChild(_drawing_node);
-  
-  //  Create a "one by one" touch event listener
   auto drawing_listener = EventListenerTouchOneByOne::create();
   drawing_listener->onTouchBegan = [this](Touch* touch, Event* event){
     _selected_craft = nullptr;
-    _drawing_node->clear();
-    
     for (auto& craft : _air_craft) {
       auto pos = craft->getPosition();
       auto loc = touch->getLocation();
@@ -92,6 +86,7 @@ void GameController::setup_touch_events() {
       if ((dx * dx + dy * dy) < 20.0f * 20.0f) {
         _selected_craft = craft;
         _selected_craft->select();
+        _selected_craft->start_new_path(loc);
         _previous_point = craft->getPosition();
         break;
       }
@@ -105,7 +100,7 @@ void GameController::setup_touch_events() {
     float dx = _previous_point.x - loc.x;
     float dy = _previous_point.y - loc.y;
     if ((dx * dx + dy * dy) > 20.0f * 20.0f) {
-      _drawing_node->drawLine(_previous_point, loc, cocos2d::Color4F::WHITE);
+      _selected_craft->add_path_point(loc);
       _previous_point = loc;
     }
   };
@@ -114,7 +109,6 @@ void GameController::setup_touch_events() {
       _selected_craft->deselect();
     }
     _selected_craft = nullptr;
-    _drawing_node->clear();
   };
   _eventDispatcher->addEventListenerWithSceneGraphPriority(drawing_listener, this);
 }

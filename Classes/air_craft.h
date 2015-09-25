@@ -12,6 +12,7 @@
 #include "cocos2d.h"
 #include "ui/UILayout.h"
 #include "2d/CCDrawNode.h"
+#include "air_craft_path.h"
 
 using namespace cocos2d;
 
@@ -27,6 +28,9 @@ public:
   void reset_status();
   void select() { _is_selected = true; }
   void deselect() { _is_selected = false; }
+  AirCraftPath* get_path() { return _path; }
+  void start_new_path(Vec2 start_point);
+  void add_path_point(Vec2 point);
   
 protected:
   float m_speed = 80.0;
@@ -38,4 +42,6 @@ protected:
   DrawNode* _selection_box = nullptr;
   
   bool _is_selected = false;
+  
+  AirCraftPath* _path = nullptr;
 };

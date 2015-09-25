@@ -23,8 +23,6 @@ protected:
   std::vector<AirCraft*> _air_craft;
   float _generator_timer = 0.0f;
   int score = 0;
-  
   Vec2 _previous_point;
   AirCraft* _selected_craft = nullptr;
-  DrawNode* _drawing_node = nullptr;
 };
